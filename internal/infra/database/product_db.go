@@ -13,7 +13,7 @@ func NewProductDB(db *gorm.DB) *ProductDB {
 	return &ProductDB{DB: db}
 }
 
-func (db *ProductDB) CreateProduct(product entity.Product) error {
+func (db *ProductDB) CreateProduct(product *entity.Product) error {
 	return db.DB.Create(product).Error
 }
 
@@ -30,7 +30,7 @@ func (db *ProductDB) FindAll(page int, limit int, sort string) ([]*entity.Produc
 		sort = "asc"
 	}
 	if page != 0 && limit != 0 {
-		err = db.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at" + sort).Find(&products).Error
+		err = db.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at " + sort).Find(&products).Error
 	} else {
 		err = db.DB.Order("created_at" + sort).Find(&products).Error
 	}

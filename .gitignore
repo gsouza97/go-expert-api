@@ -1,2 +1,4 @@
 *.env
 coverage.out
+*.db
+.DS_Store

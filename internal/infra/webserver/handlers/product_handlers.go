@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gsouza97/go-expert-api/internal/dto"
@@ -56,6 +57,35 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	// retorna o json do produto encontrado
 	err = json.NewEncoder(w).Encode(p)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
+	page := chi.URLParam(r, "page")
+	limit := chi.URLParam(r, "limit")
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		pageInt = 0
+	}
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		limitInt = 0
+	}
+
+	sort := chi.URLParam(r, "sort")
+
+	products, err := h.ProductDB.FindAll(pageInt, limitInt, sort)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	// retorna o json dos produtos encontrados
+	err = json.NewEncoder(w).Encode(products)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

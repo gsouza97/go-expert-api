@@ -17,7 +17,7 @@ type conf struct {
 	WebServerPort string `mapstructure:"WEB_SERVER_PORT"`
 	JWTSecret     string `mapstructure:"JWT_SECRET"`
 	JWTExpiresIn  int    `mapstructure:"JWT_EXPIRES_IN"`
-	TokenAuthKey  jwtauth.JWTAuth
+	TokenAuthKey  *jwtauth.JWTAuth
 }
 
 func LoadConfig(path string) (*conf, error) {
@@ -35,6 +35,6 @@ func LoadConfig(path string) (*conf, error) {
 	if err != nil {
 		panic(err)
 	}
-	cfg.TokenAuthKey = *jwtauth.New("HS256", []byte(cfg.JWTSecret), nil)
+	cfg.TokenAuthKey = jwtauth.New("HS256", []byte(cfg.JWTSecret), nil)
 	return cfg, nil
 }

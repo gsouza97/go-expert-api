@@ -12,6 +12,7 @@ GET http://localhost:8000/products/1c11dccf-88ee-495c-b36f-b8bddd4ee7fa HTTP/1.1
 
 ### Get all products
 GET http://localhost:8000/products HTTP/1.1
+Authorization: Bearer test
 
 ### Update product
 PUT http://localhost:8000/products/1c11dccf-88ee-495c-b36f-b8bddd4ee7fa HTTP/1.1

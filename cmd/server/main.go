@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -35,6 +37,8 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.Timeout(time.Second * 10))
 
 	r.Route("/products", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.TokenAuthKey))
@@ -50,4 +54,15 @@ func main() {
 	r.Post("/users/getToken", userHandler.GetJWT)
 
 	http.ListenAndServe(":8000", r)
+}
+
+// Middleware próprio para logar requests
+func LogRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Loga o request
+		log.Printf("Request: %s %s", r.Method, r.URL.Path)
+
+		// Passa para o próximo handler
+		next.ServeHTTP(w, r)
+	})
 }

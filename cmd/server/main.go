@@ -9,13 +9,33 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth"
 	"github.com/gsouza97/go-expert-api/configs"
+	_ "github.com/gsouza97/go-expert-api/docs"
 	"github.com/gsouza97/go-expert-api/internal/entity"
 	"github.com/gsouza97/go-expert-api/internal/infra/database"
 	"github.com/gsouza97/go-expert-api/internal/infra/webserver/handlers"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
+// @title           Go Experts API
+// @version         1.0
+// @description     Product API.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   Gabriel Souza
+// @contact.url    github.com/gsouza97
+// @contact.email  gabrielss_@outlook.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8000
+// @BasePath  /
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in  header
+// @name Authorization
 func main() {
 	config, err := configs.LoadConfig(".")
 	if err != nil {
@@ -52,6 +72,8 @@ func main() {
 
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/users/getToken", userHandler.GetJWT)
+
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 
 	http.ListenAndServe(":8000", r)
 }
